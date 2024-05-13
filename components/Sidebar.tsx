@@ -12,6 +12,8 @@ import Footer from './Footer'
 const Sidebar = ({ user }: {user:any}) => {
   const pathname = usePathname();
 
+  console.log(user)
+
   return (
     <section className="sidebar">
       <nav className="flex flex-col gap-4">

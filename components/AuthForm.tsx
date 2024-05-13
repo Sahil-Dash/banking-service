@@ -27,8 +27,9 @@ import { useRouter } from 'next/navigation';
 
 import { signIn, signOut } from 'next-auth/react'
 import { useToast } from './ui/use-toast';
+import PlaidLink from './PlaidLink';
+import { signUp } from '@/lib/mongo_actions/user.actions';
 
-// import PlaidLink from './PlaidLink';
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
@@ -69,15 +70,20 @@ const AuthForm = ({ type }: { type: string }) => {
           password: data.password,
         }
 
-        const response = await axios.post('/api/signup', userData);
+        // const response = await axios.post('/api/signup', userData);
+        // console.log(response)
 
-        if (response.data.success == false) {
+        const response = await signUp(userData)
+        console.log(response.data)
+
+        if (response?.data.success == false) {
           toast({
             variant: "newVariant",
             title: "!! Error !!",
             description: response.data.message
           })
         } else {
+          setUser(response?.data.user)
           const res = await signIn("credentials", {
             email: data.email,
             password: data.password,
@@ -93,10 +99,7 @@ const AuthForm = ({ type }: { type: string }) => {
 
             router.push("/sign-in")
 
-          } else {
-            router.push("/")
-
-          }
+          } 
         }
       }
 
@@ -116,7 +119,6 @@ const AuthForm = ({ type }: { type: string }) => {
           })
         }
 
-        router.push("/")
 
       }
     } catch (error) {
@@ -158,7 +160,7 @@ const AuthForm = ({ type }: { type: string }) => {
       </header>
       {user ? (
         <div className="flex flex-col gap-4">
-          {/* <PlaidLink user={user} variant="primary" /> */}
+          <PlaidLink user={user} variant="primary" />
         </div>
       ) : (
         <>
