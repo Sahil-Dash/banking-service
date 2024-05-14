@@ -1,91 +1,117 @@
 'use client'
 import HeaderBox from '@/components/HeaderBox'
 import Loader from '@/components/Loader';
+import RecentTransactions from '@/components/RecentTransactions';
 // import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
+import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import axios from 'axios';
 // import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { useSession } from 'next-auth/react';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Home = ({ searchParams: { id, page } }: SearchParamProps) => {
 
+  const currentPage = Number(page as string) || 1
 
-  
-  const {data: session, status} = useSession()
+  const { data: session, status } = useSession()
   const [user, setUser] = useState()
+  const [accounts, setAccounts] = useState<Accounts>({ data: [], totalBanks: 0, totalCurrentBalance: 0 });
+  const [account, setAccount] = useState()
 
   useEffect(() => {
     if (session) {
-      console.log("Email-",session);
 
-      const currentUser = async (email:any) =>{
+      const currentUser = async (email: any) => {
         try {
-    
-          let data={
+
+          let data = {
             email: email
           }
           const response = await axios.post(`/api/getCurrentUser`, data);
           console.log(response.data)
           setUser(response.data.user)
+
+          const accounts = await getAccounts({ userId: response.data.user._id })
+          setAccounts(accounts)
+
+          const account = await getAccount({ bankId: accounts.data[0].bank_Id })
+          setAccount(account)
+
         } catch (error) {
           console.log(error)
         }
       }
       currentUser(session?.user?.email)
     }
+
+
+
   }, [session]); // Dependency array on session
 
 
 
-  console.log("User :- ",user)
-  
-  if (status === "loading") {
+
+  if (status === "loading" && user === undefined) {
     return <Loader />;
   }
 
-  
+
+  console.log("User :- ", user)
+  console.log("Account :- ", account)
+  console.log("Accounts :- ", accounts)
+
+  let check = user && accounts && account
+
   return (
-    
-    <section className="home">
-      <div className="home-content">
-        <header className="home-header">
+    <>
+      {(!check)
+        ? <section className="home">
+          <div className="home-content">
+            <Loader />
+          </div>
+        </section>
+        
+        : <section className="home">
+          <div className="home-content">
+            <header className="home-header">
 
-         {user && <HeaderBox 
-            type="greeting"
-            title="Welcome"
+              <HeaderBox
+                type="greeting"
+                title="Welcome"
+                user={user}
+                subtext="Access and manage your account and transactions efficiently."
+              />
+
+
+
+              <TotalBalanceBox
+                accounts={accounts.data}
+                totalBanks={accounts.totalBanks}
+                totalCurrentBalance={accounts.totalCurrentBalance}
+              />
+            </header>
+
+
+            <RecentTransactions
+              accounts={accounts.data}
+              transactions={account?.transactions}
+              bank_Id={accounts.data[0].bank_Id}
+              page={currentPage}
+            />
+          </div>
+
+          <RightSidebar
             user={user}
-            subtext="Access and manage your account and transactions efficiently."
-          />}
-
-          
-
-          <TotalBalanceBox 
-            accounts={[]}
-            totalBanks={1}
-            totalCurrentBalance={10000}
+            transactions={[]}
+            banks={accounts.data}
           />
-        </header>
-     
-
-        {/* <RecentTransactions 
-          accounts={accountsData}
-          transactions={account?.transactions}
-          appwriteItemId={appwriteItemId}
-          page={currentPage}
-        /> */}
-      </div>
-      
-       {user && <RightSidebar 
-        user={user}
-        transactions={[]}
-        banks={[{currentBalance: 4000, name:"Sahil"},{ currentBalance: 6000, name:"Sunil"}]}
-      />} 
-      
 
 
-    </section>
+
+        </section>}
+    </>
   )
 }
 

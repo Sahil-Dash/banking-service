@@ -119,6 +119,10 @@ const AuthForm = ({ type }: { type: string }) => {
           })
         }
 
+        else{
+          router.push("/")
+        }
+
 
       }
     } catch (error) {

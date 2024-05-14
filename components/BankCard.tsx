@@ -9,11 +9,11 @@ const BankCard = ({ account, userName, showBalance = true }: CreditCardProps) =>
   console.log(account);
   return (
     <div className="flex flex-col">
-      <Link href={`/transaction-history/?id=${account.appwriteItemId}`} className="bank-card">
+      <Link href={`/transaction-history/?id=${account.bank_Id}`} className="bank-card">
         <div className="bank-card_content">
           <div>
             <h1 className="text-16 font-semibold text-white">
-              {account.name}
+              {userName}
             </h1>
             <p className="font-ibm-plex-serif font-black text-white">
               {formatAmount(account.currentBalance)}

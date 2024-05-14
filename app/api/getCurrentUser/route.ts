@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/mongoDb"
 import User from "@/lib/mongo_models/users.model"
+import Dwolla from "@/lib/mongo_models/dwolla.models"
 
 export async function POST(req: Request){
     try {
@@ -9,7 +10,7 @@ export async function POST(req: Request){
         const data = await req.json()
         const {email} = data as {email: string}
 
-        const user = await User.findOne({email: email})
+        const user = await Dwolla.findOne({email: email})
         if(user){
             return NextResponse.json({success: true, message: "user found exists", user: user})
         }

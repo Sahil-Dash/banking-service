@@ -35,8 +35,6 @@ export const createLinkToken = async (user: User) => {
 
 
 
-
-
 export const exchangePublicToken = async ({
   publicToken,
   user,
@@ -47,6 +45,7 @@ export const exchangePublicToken = async ({
       public_token: publicToken,
     });
 
+    console.log("public token")
     const accessToken = response.data.access_token;
     const itemId = response.data.item_id;
     
@@ -54,6 +53,8 @@ export const exchangePublicToken = async ({
     const accountsResponse = await plaidClient.accountsGet({
       access_token: accessToken,
     });
+
+    console.log("accounts get")
 
     const accountData = accountsResponse.data.accounts[0];
 
@@ -63,6 +64,8 @@ export const exchangePublicToken = async ({
       account_id: accountData.account_id,
       processor: "dwolla" as ProcessorTokenCreateRequestProcessorEnum,
     };
+
+    console.log(" token request ")
 
     const processorTokenResponse = await plaidClient.processorTokenCreate(request);
     const processorToken = processorTokenResponse.data.processor_token;
@@ -74,8 +77,12 @@ export const exchangePublicToken = async ({
       bankName: accountData.name,
     });
     
+    console.log("funding source ")
+
     // If the funding source URL is not created, throw an error
     if (!fundingSourceUrl) throw Error;
+
+    console.log("creating bank")
 
     const bank = new Bank({userId: user._id,
       bankId: itemId,
@@ -98,37 +105,33 @@ export const exchangePublicToken = async ({
   }
 }
 
-// export const getBanks = async ({ userId }: getBanksProps) => {
-//   try {
-//     const { database } = await createAdminClient();
 
-//     const banks = await database.listDocuments(
-//       DATABASE_ID!,
-//       BANK_COLLECTION_ID!,
-//       [Query.equal('userId', [userId])]
-//     )
 
-//     return parseStringify(banks.documents);
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 
-// export const getBank = async ({ documentId }: getBankProps) => {
-//   try {
-//     const { database } = await createAdminClient();
+export const getBanks = async ({ userId }: getBanksProps) => {
+  try {
+    
+    const banks: Bank[] = await Bank.find({userId})
+    return banks
 
-//     const bank = await database.listDocuments(
-//       DATABASE_ID!,
-//       BANK_COLLECTION_ID!,
-//       [Query.equal('$id', [documentId])]
-//     )
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}
 
-//     return parseStringify(bank.documents[0]);
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+export const getBank = async ({ documentId }: getBankProps) => {
+  try {
+
+    const bank = await Bank.findById({_id:documentId})
+
+    return bank
+    
+  } catch (error) {
+    console.log(error)
+    return {}
+  }
+}
 
 // export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps) => {
 //   try {

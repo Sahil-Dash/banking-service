@@ -22,7 +22,6 @@ export default function RootLayout({
 
   useEffect(() => {
     if (session) {
-      console.log("Email-", session);
 
       const currentUser = async (email: any) => {
         try {
@@ -41,9 +40,6 @@ export default function RootLayout({
     }
   }, [session]); // Dependency array on session
 
-
-
-  console.log("User :- ", user)
 
 
 
