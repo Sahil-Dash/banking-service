@@ -20,6 +20,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
   try {
     // get banks from db
     const banks: Bank[] = await getBanks({ userId });
+    console.log("banks :- ", banks);
 
     const accounts = await Promise.all(
       banks?.map(async (bank: Bank) => {
@@ -27,6 +28,8 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
         const accountsResponse = await plaidClient.accountsGet({
           access_token: bank.accessToken,
         });
+        // console.log("Test :- ", accounts);
+
         const accountData = accountsResponse.data.accounts[0];
 
         // get institution info from plaid
@@ -81,7 +84,7 @@ export const getAccount = async ({ bankId }: getAccountProps) => {
       bankId: bank?._id,
     });
 
-    // const transferTransactions = {};
+    // const transferTransactions = [];
 
     const transferTransactions = transferTransactionsData.map(
       (transferData: Transaction) => ({
@@ -98,7 +101,13 @@ export const getAccount = async ({ bankId }: getAccountProps) => {
       })
     );
 
-    console.log("Transactions :- ", transferTransactionsData);
+    console.log(
+      "Transactions :- ",
+      transferTransactionsData,
+      transferTransactions
+    );
+
+    // transferTransactions = (transferTransactions.length === 0)? [] : transferTransactions
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -123,9 +132,13 @@ export const getAccount = async ({ bankId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...transferTransactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    // const allTransactions = [...transactions, ...transferTransactions].sort(
+    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // );
+
+    const allTransactions = transactions
+      .concat(transferTransactions)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return parseStringify({
       data: account,
