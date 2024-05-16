@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BankTabItem } from './BankTabItem'
-import BankInfo from './BankInfo'
-import TransactionsTable from './TransactionsTable'
-// import { Pagination } from './Pagination'
+import Link from "next/link";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BankTabItem } from "./BankTabItem";
+import BankInfo from "./BankInfo";
+import TransactionsTable from "./TransactionsTable";
+import { Pagination } from "./Pagination";
 
 const RecentTransactions = ({
   accounts,
@@ -18,8 +18,9 @@ const RecentTransactions = ({
   const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
 
   const currentTransactions = transactions.slice(
-    indexOfFirstTransaction, indexOfLastTransaction
-  )
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
 
   return (
     <section className="recent-transactions">
@@ -34,7 +35,7 @@ const RecentTransactions = ({
       </header>
 
       <Tabs defaultValue={bank_Id} className="w-full">
-      <TabsList className="recent-transactions-tablist">
+        <TabsList className="recent-transactions-tablist">
           {accounts.map((account: Account) => (
             <TabsTrigger key={account.id} value={account.bank_Id}>
               <BankTabItem
@@ -52,26 +53,20 @@ const RecentTransactions = ({
             key={account.id}
             className="space-y-4"
           >
-            <BankInfo 
-              account={account}
-              bank_Id={bank_Id}
-              type="full"
-            />
+            <BankInfo account={account} bank_Id={bank_Id} type="full" />
 
             <TransactionsTable transactions={currentTransactions} />
-            
 
-            {/* {totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="my-4 w-full">
                 <Pagination totalPages={totalPages} page={page} />
               </div>
-            )
-            } */}
+            )}
           </TabsContent>
         ))}
       </Tabs>
     </section>
-  )
-}
+  );
+};
 
-export default RecentTransactions
+export default RecentTransactions;

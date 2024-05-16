@@ -100,7 +100,11 @@ const Home = ({ searchParams: { id, page } }: SearchParamProps) => {
             )}
           </div>
 
-          <RightSidebar user={user} transactions={[]} banks={accounts.data} />
+          <RightSidebar
+            user={user}
+            transactions={account?.transactions}
+            banks={accounts.data}
+          />
         </section>
       )}
     </>

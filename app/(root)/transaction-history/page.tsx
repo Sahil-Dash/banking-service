@@ -1,7 +1,7 @@
 "use client";
 
 import HeaderBox from "@/components/HeaderBox";
-// import { Pagination } from '@/components/Pagination';
+import { Pagination } from "@/components/Pagination";
 import TransactionsTable from "@/components/TransactionsTable";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 // import { getLoggedInUser } from '@/lib/actions/user.actions';
@@ -55,6 +55,17 @@ const TransactionHistory = ({
     }
   }, [session, id]); // Dependency array on session
 
+  const rowsPerPage = 10;
+  const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
+
+  const indexOfLastTransaction = currentPage * rowsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
+
+  const currentTransactions = account?.transactions.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
+
   if (status === "loading" && user === undefined) {
     return <Loader />;
   }
@@ -99,12 +110,12 @@ const TransactionHistory = ({
             </div>
 
             <section className="flex w-full flex-col gap-6">
-              <TransactionsTable transactions={account?.transactions} />
-              {/* {totalPages > 1 && (
-              <div className="my-4 w-full">
-                <Pagination totalPages={totalPages} page={currentPage} />
-              </div>
-            )} */}
+              <TransactionsTable transactions={currentTransactions} />
+              {totalPages > 1 && (
+                <div className="my-4 w-full">
+                  <Pagination totalPages={totalPages} page={currentPage} />
+                </div>
+              )}
             </section>
           </div>
         </div>
