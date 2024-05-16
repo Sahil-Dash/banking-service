@@ -123,7 +123,7 @@ export const getBanks = async ({ userId }: getBanksProps) => {
 export const getBank = async ({ documentId }: getBankProps) => {
   try {
 
-    const bank = await Bank.findById({_id:documentId})
+    const bank = await Bank.findById({_id:documentId}).lean()
 
     return bank
     
@@ -133,20 +133,16 @@ export const getBank = async ({ documentId }: getBankProps) => {
   }
 }
 
-// export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps) => {
-//   try {
-//     const { database } = await createAdminClient();
 
-//     const bank = await database.listDocuments(
-//       DATABASE_ID!,
-//       BANK_COLLECTION_ID!,
-//       [Query.equal('accountId', [accountId])]
-//     )
+export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps) => {
+  try {
 
-//     if(bank.total !== 1) return null;
-
-//     return parseStringify(bank.documents[0]);
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+    const bank = await Bank.findOne({accountId: accountId}).lean()
+    console.log("Bank : -",bank)
+    return bank
+    
+  } catch (error) {
+    console.log(error)
+    return {}
+  }
+}

@@ -26,6 +26,7 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
   )
 } 
 
+
 const TransactionsTable = ({ transactions }: TransactionTableProps) => {
   return (
     <Table>
@@ -50,7 +51,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
           return (
             <TableRow key={t.id} className={`${isDebit || amount[0] === '-' ? 'bg-[#FFFBFA]' : 'bg-[#F6FEF9]'} !over:bg-none !border-b-DEFAULT`}>
               <TableCell className="max-w-[250px] pl-2 pr-10">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <h1 className="text-14 truncate font-semibold text-[#344054]">
                     {removeSpecialCharacters(t.name)}
                   </h1>
@@ -60,7 +61,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
               <TableCell className={`pl-2 pr-10 font-semibold ${
                 isDebit || amount[0] === '-' ?
                   'text-[#f04438]'
-                  : 'text-[#039855]'
+                  :'text-[#039855]'
               }`}>
                 {isDebit ? `-${amount}` : isCredit ? amount : amount}
               </TableCell>
