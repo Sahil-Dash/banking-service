@@ -83,6 +83,7 @@ const AuthForm = ({ type }: { type: string }) => {
           });
         } else {
           setUser(response?.data.user);
+
           const res = await signIn("credentials", {
             email: data.email,
             password: data.password,
